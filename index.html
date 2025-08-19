@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calendar Simplu</title>
+  <title>Calendar Configurabil</title>
   <style>
     * {
       margin: 0;
@@ -182,8 +182,8 @@
 </div>
 
 <script>
-  class SimpleCalendar {
-    constructor() {
+  class ConfigurableCalendar {
+    constructor(workWeekType = 'monday-friday') {
       this.currentDate = new Date();
       this.today = new Date();
       this.monthNames = [
@@ -192,9 +192,14 @@
       ];
       this.dayNames = ['Lu', 'Ma', 'Mi', 'Jo', 'Vi', 'Sâ', 'Du'];
 
-      // Zilele lucrătoare: Marți-Sâmbătă (JavaScript standard: 2,3,4,5,6)
-      this.workingDays = [2, 3, 4, 5, 6]; // Marți(2) - Sâmbătă(6)
+      // Doar 2 configurări disponibile
+      this.workWeekConfigs = {
+        'monday-friday': [1, 2, 3, 4, 5],     // Luni-Vineri
+        'tuesday-saturday': [2, 3, 4, 5, 6]   // Marți-Sâmbătă
+      };
 
+      // Setează configurarea inițială
+      this.setWorkWeek(workWeekType);
       this.init();
     }
 
@@ -213,6 +218,32 @@
         this.currentDate.setMonth(this.currentDate.getMonth() + 1);
         this.render();
       });
+    }
+
+    // Metodă publică pentru a schimba tipul săptămânii lucrătoare
+    setWorkWeek(workWeekType) {
+      if (!this.workWeekConfigs[workWeekType]) {
+        console.warn(`Tip săptămână lucrătoare necunoscut: ${workWeekType}. Se folosește 'monday-friday'.`);
+        workWeekType = 'monday-friday';
+      }
+
+      this.currentWorkWeek = workWeekType;
+      this.workingDays = this.workWeekConfigs[workWeekType];
+
+      // Re-render dacă calendarul există deja
+      if (document.getElementById('calendar')) {
+        this.render();
+      }
+    }
+
+    // Metodă pentru a obține configurația curentă
+    getWorkWeekType() {
+      return this.currentWorkWeek;
+    }
+
+    // Metodă pentru a obține zilele lucrătoare
+    getWorkingDays() {
+      return [...this.workingDays]; // returnează o copie
     }
 
     isWorkingDay(dayOfWeek) {
@@ -335,6 +366,14 @@
     selectSingleDay(dayCell) {
       this.clearAllSelections();
       dayCell.classList.add('single-day-selected');
+
+      // Console log pentru selecția unei zile individuale
+      const date = new Date(dayCell.dataset.date);
+      console.log('📅 Zi individuală selectată:', {
+        data: date.toLocaleDateString('ro-RO'),
+        ziSaptamana: this.dayNames[date.getDay() === 0 ? 6 : date.getDay() - 1],
+        timestamp: dayCell.dataset.date
+      });
     }
 
     selectWorkingWeek(selectedDate) {
@@ -346,6 +385,8 @@
       const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
       const weekStart = new Date(selectedDay);
       weekStart.setDate(selectedDay.getDate() + mondayOffset);
+
+      const workingDaysSelected = [];
 
       // Go through all 7 days of the week
       for (let i = 0; i < 7; i++) {
@@ -365,16 +406,42 @@
               // Only highlight working days and not other-month days
               if (this.isWorkingDay(currentDayOfWeek) && !cell.classList.contains('other-month')) {
                 cell.classList.add('working-day-active');
+                // Adaugă în lista pentru console log
+                workingDaysSelected.push({
+                  data: cellDate.toLocaleDateString('ro-RO'),
+                  ziSaptamana: this.dayNames[currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1],
+                  timestamp: cell.dataset.date
+                });
               }
             }
           }
         });
       }
+
+      // Console log pentru săptămâna lucrătoare selectată
+      console.log('🗓️ Săptămână lucrătoare selectată:', {
+        tipSaptamana: this.currentWorkWeek,
+        zileLucratoare: workingDaysSelected,
+        totalZile: workingDaysSelected.length,
+        perioada: `${workingDaysSelected[0]?.data} - ${workingDaysSelected[workingDaysSelected.length - 1]?.data}`
+      });
     }
   }
 
+  // Exemplu de utilizare:
   document.addEventListener('DOMContentLoaded', () => {
-    new SimpleCalendar();
+    // Varianta 1: Luni-Vineri (implicit)
+    const calendar = new ConfigurableCalendar('monday-friday');
+
+    // Varianta 2: Marți-Sâmbătă
+    // const calendar = new ConfigurableCalendar('tuesday-saturday');
+
+    // Expunem calendarul global pentru control din exterior
+    window.calendar = calendar;
+
+    // Exemplu de cum să schimbi configurația din exterior:
+    // window.calendar.setWorkWeek('tuesday-saturday');
+    // console.log(window.calendar.getWorkWeekType()); // 'tuesday-saturday'
   });
 </script>
 </body>
