@@ -1,0 +1,158 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: white;
+  padding: 40px 20px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.calendar-container {
+  background: white;
+  padding: 20px;
+  max-width: 320px;
+  width: 100%;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.month-year {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: #999;
+}
+
+.nav-btn:hover {
+  color: #666;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+}
+
+.day-header {
+  text-align: center;
+  font-weight: 500;
+  color: #888;
+  padding: 12px 4px;
+  font-size: 14px;
+  position: relative;
+}
+
+.day-header.current-day-header {
+  color: #4a7c59;
+  font-weight: 600;
+}
+
+.day-header.current-day-header::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background-color: #4a7c59;
+  border-radius: 1px;
+}
+
+.day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  background: white;
+  color: #333;
+}
+
+.day-cell:hover {
+  background: #f8f8f8;
+}
+
+/* Zilele lucrătoare activate (când se selectează săptămâna) */
+.day-cell.working-day-active {
+  background: #90c695;
+  color: white;
+  border-radius: 8px;
+  margin: 2px;
+}
+
+.day-cell.working-day-active:hover {
+  background: #7fb584;
+}
+
+/* Ziua curentă în calendar - cu culoare mai închisă */
+.day-cell.current-day {
+  background: #4a7c59 !important;
+  color: white !important;
+  font-weight: 600;
+  border-radius: 8px;
+  margin: 2px;
+}
+
+/* Zilele din luna precedentă/următoare */
+.day-cell.other-month {
+  color: #ddd;
+  background: white;
+}
+
+/* Ziua selectată - aceeași culoare ca zilele lucrătoare */
+.day-cell.selected {
+  background: #90c695 !important;
+  color: white !important;
+  border-radius: 8px;
+  margin: 2px;
+}
+
+@media (max-width: 480px) {
+  .calendar-container {
+    padding: 15px;
+    margin: 10px;
+    max-width: 300px;
+  }
+
+  .month-year {
+    font-size: 20px;
+  }
+
+  .day-cell {
+    font-size: 14px;
+  }
+}
