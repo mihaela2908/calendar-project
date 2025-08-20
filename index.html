@@ -273,13 +273,30 @@
     }
 
     generateSlides() {
-      // Generează 12 luni pentru anul curent
+      // Generează toate lunile din 2020 până în 2030
       this.slides = [];
-      for (let i = 0; i < 12; i++) {
-        const monthDate = new Date(this.currentDate.getFullYear(), i, 1);
-        this.slides.push(monthDate);
+      for (let year = 2020; year <= 2030; year++) {
+        for (let month = 0; month < 12; month++) {
+          const monthDate = new Date(year, month, 1);
+          this.slides.push(monthDate);
+        }
       }
-      this.currentSlide = this.currentDate.getMonth();
+
+      // Setează slide-ul curent la luna actuală
+      const currentYear = this.currentDate.getFullYear();
+      const currentMonth = this.currentDate.getMonth();
+
+      // Calculează indexul slide-ului curent
+      this.currentSlide = (currentYear - 2020) * 12 + currentMonth;
+
+      // Verifică dacă suntem în intervalul 2020-2030
+      if (currentYear < 2020) {
+        this.currentSlide = 0; // Prima lună din 2020
+        this.currentDate = new Date(2020, 0, 1);
+      } else if (currentYear > 2030) {
+        this.currentSlide = this.slides.length - 1; // Ultima lună din 2030
+        this.currentDate = new Date(2030, 11, 1);
+      }
     }
 
     attachEventListeners() {
@@ -575,6 +592,7 @@
     window.calendar = calendar;
 
     console.log('📱 Choc UI carousel style enabled!');
+    console.log(`📅 Calendar cu ${calendar.slides.length} luni (2020-2030)`);
   });
 </script>
 </body>
